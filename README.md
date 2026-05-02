@@ -1,16 +1,23 @@
+# NBA Data Pipeline & Analytics Dashboard
+
+Production-style data pipeline that ingests NBA player statistics from the NBA API, stores curated and historical data in PostgreSQL, and powers an interactive Tableau dashboard for performance analysis.
+
 ## Live Dashboard
-https://public.tableau.com/authoring/NBAPlayerPerformanceDashboard_17777630690560/NBAPlayerPerformanceDashboard#1
+https://public.tableau.com/app/profile/alex.quintero4755/viz/NBAPlayerPerformanceDashboard_17777630690560/NBAPlayerPerformanceDashboard
 
-# NBA Data Pipeline
-
-A production-style data engineering pipeline that ingests NBA player statistics from the NBA API, loads curated data into PostgreSQL, validates data quality, stores historical snapshots, and exposes analytics-ready views.
+## Key Features
+- Ingests 500+ player records from NBA API
+- Idempotent upsert pipeline using PostgreSQL
+- Data validation checks (nulls, anomalies, record counts)
+- Retry logic for API reliability
+- Historical snapshot tracking for time-series analysis
+- Analytics-ready SQL view powering Tableau dashboard
 
 ## Tech Stack
+Python, PostgreSQL, SQLAlchemy, pandas, Tableau
 
-* Python (nba_api, SQLAlchemy)
-* PostgreSQL
-* pandas
-* python-dotenv
+## Architecture
+API → Python ETL → PostgreSQL (curated + history) → SQL View → Tableau Dashboard
 
 ## Pipeline Architecture
 
