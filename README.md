@@ -1,3 +1,6 @@
+## Live Dashboard
+https://public.tableau.com/authoring/NBAPlayerPerformanceDashboard_17777630690560/NBAPlayerPerformanceDashboard#1
+
 # NBA Data Pipeline
 
 A production-style data engineering pipeline that ingests NBA player statistics from the NBA API, loads curated data into PostgreSQL, validates data quality, stores historical snapshots, and exposes analytics-ready views.
