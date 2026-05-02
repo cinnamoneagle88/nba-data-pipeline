@@ -1,22 +1,48 @@
 # NBA Data Pipeline
 
-A production-style data engineering project that extracts NBA player statistics from the NBA API, loads curated player stats into PostgreSQL, stores historical snapshots, and exposes an analytics-ready leaderboard view.
+A production-style data engineering pipeline that ingests NBA player statistics from the NBA API, loads curated data into PostgreSQL, validates data quality, stores historical snapshots, and exposes analytics-ready views.
 
-## Stack
-- Python
-- PostgreSQL
-- SQLAlchemy
-- python-dotenv
-- nba_api
-- DBeaver
+## Tech Stack
 
-## Pipeline
+* Python (nba_api, SQLAlchemy)
+* PostgreSQL
+* pandas
+* python-dotenv
+
+## Pipeline Architecture
+
 1. Extract player stats from NBA API
-2. Upsert latest player stats into `nba_player_stats`
-3. Insert full snapshot into `nba_player_stats_history`
-4. Query analytics-ready leaderboard via `nba_player_leaderboard`
+2. Upsert latest data into `nba_player_stats`
+3. Validate data quality (nulls, counts, anomalies)
+4. Store full snapshot in `nba_player_stats_history`
+5. Query analytics-ready leaderboard via `nba_player_leaderboard`
 
-## Run
+## Run Locally
+
 ```bash
 source .venv/bin/activate
 python run_nba_pipeline.py
+```
+
+## Data Model
+
+* `nba_player_stats` → latest player stats (upserted)
+* `nba_player_stats_history` → time-series snapshots
+* `nba_player_leaderboard` → analytics view (PPG, RPG, APG)
+
+## Example Query
+
+```sql
+SELECT player_name, team_abbreviation, gp, ppg
+FROM public.nba_player_leaderboard
+ORDER BY ppg DESC
+LIMIT 10;
+```
+
+## Key Features
+
+* Idempotent upsert pipeline
+* Retry logic for API reliability
+* Data validation checks before persistence
+* Historical snapshot tracking for trend analysis
+* Centralized configuration via `config.py`
