@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
+from config import DB_URI
 import os
 
 load_dotenv()

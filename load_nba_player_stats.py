@@ -1,28 +1,38 @@
 from datetime import datetime, timezone
-
+import time
 from nba_api.stats.endpoints import leaguedashplayerstats
 from sqlalchemy import create_engine, text
-from dotenv import load_dotenv
-import os
 
-load_dotenv()
-DB_URI = os.environ["DB_URI"]
+from config import DB_URI, SEASON, SEASON_TYPE
 
-SEASON = "2025-26"
 
 def main():
     engine = create_engine(DB_URI)
 
-    stats = leaguedashplayerstats.LeagueDashPlayerStats(
-        season=SEASON,
-        season_type_all_star="Regular Season"
-    )
+    df = None
 
-    df = stats.get_data_frames()[0]
+for attempt in range(1, 4):
+    try:
+        stats = leaguedashplayerstats.LeagueDashPlayerStats(
+            season=SEASON,
+            season_type_all_star=SEASON_TYPE,
+            timeout=60,
+        )
+        df = stats.get_data_frames()[0]
+        break
+
+    except Exception as e:
+        print(f"NBA API attempt {attempt} failed: {e}")
+
+        if attempt == 3:
+            raise RuntimeError("NBA API failed after 3 attempts") from e
+
+        time.sleep(5)
+
     fetched_at = datetime.now(timezone.utc)
 
     upsert_sql = text("""
-        INSERT INTO nba_player_stats (
+        INSERT INTO public.nba_player_stats (
           player_id, player_name, team_id, team_abbreviation, age,
           gp, min, pts, reb, ast, stl, blk, tov,
           fg_pct, fg3_pct, ft_pct, fetched_at
@@ -77,6 +87,7 @@ def main():
         conn.execute(upsert_sql, rows)
 
     print(f"Upserted {len(rows)} NBA player stat rows for season {SEASON}")
+
 
 if __name__ == "__main__":
     main()

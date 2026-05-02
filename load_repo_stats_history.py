@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine, text
-
+from pipeline_logger import logger
 DB_URI = "postgresql+psycopg2://postgres:mammoth@localhost:5432/nba_pipeline"
 SOURCE = "github:pandas-dev/pandas"
 
@@ -63,6 +63,6 @@ def main():
         conn.execute(insert_sql, data)
 
     print("Inserted 1 row into repo_stats_history.")
-
+    logger.info("Pipeline completed successfully.")
 if __name__ == "__main__":
     main()
